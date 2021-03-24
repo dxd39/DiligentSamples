@@ -392,7 +392,7 @@ Note that a TLAS can be created with `BindingMode = HIT_GROUP_BINDING_MODE_PER_G
 in which case hit groups can be individually specified for each geometry in every instance, for example:
 
 ```cpp
-m_pSBT->BindHitGroupForGeometry(m_pTLAS, "Cube Instance 1", "Cube", PRIMARY_RAY_INDEX, "CubePrimaryHit"  );
+m_pSBT->BindHitGroupForGeometry(m_pTLAS, "Cube Instance 1", "Cube", PRIMARY_RAY_INDEX, "CubePrimaryHit");
 ```
 
 The resulting SBT will contain the following data:
@@ -420,6 +420,12 @@ the data location.
 As an alternative, you can use `IShaderBindingTable::BindHitGroupByIndex()` to bind hit group directly to any location
 in the range from `TLASBuildInfo::FirstContributionToHitGroupIndex` to `TLASBuildInfo::LastContributionToHitGroupIndex`,
 call `ITopLevelAS::GetBuildInfo()` to get the build info.
+
+The `m_pSBT->Bind...` methods writes data to temporary memory in CPU-side, to send data to the GPU we must call:
+```cpp
+m_pImmediateContext->UpdateSBT(m_pSBT);
+```
+Now all further TraceRays commands will read the new shader bindings.
 
 
 ## Resource Binding
